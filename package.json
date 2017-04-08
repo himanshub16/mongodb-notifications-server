@@ -1,0 +1,28 @@
+{
+  "name": "mongo-notifications-server",
+  "version": "1.0.0",
+  "description": "Server which lets users to subscribe to push notifications on events in a MongoDB database.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/himanshub16/mongodb-notifications-server.git"
+  },
+  "keywords": [
+    "notifications",
+    "real-time",
+    "mongodb",
+    "oplog"
+  ],
+  "author": "Himanshu Shekhar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/himanshub16/mongodb-notifications-server/issues"
+  },
+  "homepage": "https://github.com/himanshub16/mongodb-notifications-server#readme",
+  "dependencies": {
+    "mongo-oplog-watcher": "0.0.1"
+  }
+}
