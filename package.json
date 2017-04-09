@@ -23,8 +23,9 @@
   },
   "homepage": "https://github.com/himanshub16/mongodb-notifications-server#readme",
   "dependencies": {
-    "mongo-oplog-watcher": "0.0.1",
+    "express": "^4.5.12",
+    "mongo-oplog": "^2.0.2",
     "mongodb": "^2.2.25",
-    "express": "^4.5.12"
+    "socketio": "^1.3"
   }
 }
