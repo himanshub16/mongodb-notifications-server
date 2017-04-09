@@ -41,6 +41,7 @@
                 <span class='notifTime' style="font-weight: bold">Time</span>
                 <span class='notifContent' style="margin-left: 120px; font-weight: bold">Notification</span>
                 <button id="clearNotifications">Clear Notifications</button>
+                <button id="stopNotifications">Stop Notifications</button>
                 <hr>
             </div>
             <div id="notificationsTable">
@@ -189,6 +190,11 @@
         document.getElementById("clearNotifications").onclick = function(e) {
             e.preventDefault();
             notificationsTable.innerHTML = '';
+        }
+
+        document.getElementById("stopNotifications").onclick = function(e) {
+            socket.disconnect();
+            window.location.reload();
         }
     </script>
 </html>
