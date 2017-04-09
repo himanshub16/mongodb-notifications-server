@@ -3,6 +3,18 @@
 ---
 
 ### Preparing to run
+#### TLDR
+Inside the folder having this code
+```
+mongoimport --db test --collection subscribers --drop --file subscribers.json
+mongoimport --db test --collection people --drop --file people.json
+npm install
+sudo mongod --port 27017 --dbpath /var/lib/mongodb --replSet rs0
+node index.js test
+```
+Open http://localhost:4000/
+
+#### Detailed explanation
 * Sample datasets are available in files *people.json*, and *subscribers.json*.
 * Use the following commands to import the collections to MongoDB. You can change the name of database and collection as required, but remember to make the corresponding changes in *configs.js*.
 
