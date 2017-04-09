@@ -28,3 +28,33 @@ node index.js
 node index.js test
 ```
 * Open `localhost:4000` to see the events as database changes.
+
+---
+
+## How I figured out the to this problem?
+
+### The problems
+* **Triggers**: MongoDB doesn't provide triggers, which can be used to handle events like database updates.
+  **Solution**: However, Mongo has something called *tailable cursors*, which are similar to *tail -f* on Unix.
+                But, the [official docs](https://docs.mongodb.com/manual/core/tailable-cursors/) doesn't recommend tailable cursors for high volume of writes. Rather, they provide a method of replication of databases, and *oplogs*, which is kinda log of whatever query is made. One can smartly utilize this log in his/her interest.
+
+                For NodeJS, there were many oplog watchers already available, of which many were obsolete, and many were poorly documented and unreliable. This reduced the number of choices after trying most of them, making me finally step onto [mongo-oplog-watch](https://github.com/sachinb94/mongo-oplog-watch). It worked like charm, credits to proper documentation.
+
+
+* **Realtime communication**: The notifications need to be sent to clients in real time.
+  **Solution**: [Socket.IO](https://socket.io/) is the most reliable way in Node to handle real-time communication. 
+                With plenty of examples available out there, it made the task easy.
+                But, we had to handle many socket connections. This was done by making a hashtable with userId as keys (easy to implement as JSON).
+                The references are properly mentioned in *references.txt*.
+
+
+
+### Code structure
+The codebase is built upon **Node JS**. There are three main javascript files:
+1. **index.js** : Creates **ExpressJS** and **Socket.IO** server, sets up routes and handle interactions with the client.
+2. **notifier.js** : Handles the direct interaction with MongoDB instance, like subscribe, unsubscribe, watch a collection for changes, get user list from database, etc.
+3. **configs.js**: Has configuration variables so that configuration can be easily changed.
+
+There are two collections.
+1. **People's collection**: This contains the objects for all users, and their basic data.
+2. **Subscriber's collection**: This contains the objects for all subscribers, so that other instance of this code can see which users are being served currently.
