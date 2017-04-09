@@ -1,0 +1,167 @@
+<html>
+    <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            text-align: center;
+        }
+        #stalkingUsersDiv span {
+            padding: 20px;
+            text-decoration: underline;
+        }
+        #notificationsDiv span.notifTime {
+            margin: 5px;
+        }
+        #notificationsDiv span.notifContent {
+            margin-left: 20px;
+        }
+        @media screen and (min-width: 500px) {
+            #subscriptionDiv {
+                max-width: 45vw;
+                text-align: left;
+                position: absolute;
+            }
+            #notificationsDiv {
+                max-width: 55vw;
+                margin-left: 45vw;
+                text-align: left;
+                margin-top: 0;
+            }
+        }
+    </style>
+    </head>
+    <body>
+        <div id="identifyDiv">
+            <h2>Realtime notification system using socket.io, express and mongodb</h2>
+            <h3>Himanshu Shekhar (himashushekharb16@gmail.com)</h3>
+            
+        </div>
+        <hr>
+
+        <section id="notificationsDiv">
+            <div>
+                <span class='notifTime' style="font-weight: bold">Time</span>
+                <span class='notifContent' style="margin-left: 120px; font-weight: bold">Notification</span>
+                <hr>
+            </div>
+            <div id="notificationsTable">
+            </div>    
+        </section>
+
+        <section id="subscriptionDiv">
+            <form name="userIdentifyForm">
+                Who are you : <input type="text" id="identityInput" placeholder="Enter your name" />
+                <br><br>
+                Whom do you want to stalk?
+                <select name="" id="userSelect" title="Select a name and click on +">
+                    <option value="all">All</option>
+                </select>
+                <button id="selectUserButton" title="Add option to list"><b>+</b></button>
+                <br>
+                <div id="stalkingUsersDiv">
+                </div>
+                <br>
+                <br>
+                <fieldset>
+                    <legend>Select fields to monitor : </legend>
+                    <input type="checkbox" name="field" value="fullName">FullName
+                    <input type="checkbox" name="field" value="location">location
+                    <input type="checkbox" name="field" value="status">  Status
+                    <input type="checkbox" name="field" value="relationship"> Relationship
+                </fieldset>
+                <br><br>
+                <center>
+                    <button type="submit" id="subscribeBtn">Start Stalking!</button>
+                </center>
+            </form>
+            <br><br>
+            
+        </section>
+
+    </body>
+
+    <script>
+        var userSelect = document.getElementById('userSelect');
+        var stalkingUsersDiv = document.getElementById('stalkingUsersDiv');
+        var notificationsTable = document.getElementById("notificationsTable");
+        var selectedUsers = new Set();
+
+        /* fix css of some elements */
+        var headerHeight = document.getElementById('identifyDiv').offsetHeight + 50;
+        document.getElementById('subscriptionDiv').style.top = headerHeight;
+        notificationsTable.style.height = document.body.offsetHeight - headerHeight;
+
+        function addNotification(message) {
+            let d = new Date();
+            let elem = document.createElement('div');
+            elem.innerHTML = "<span class='notifTime'>" + d.toLocaleString() + "</span>"
+                            +"<span class='notifContent'>" + message + "</span>";
+            notificationsTable.insertBefore(elem, notificationsTable.firstChild);
+            elem.style.backgroundColor = "#ffc300";
+            setTimeout(function() {
+                elem.style.backgroundColor = "white";
+            }, 2000);
+        }
+
+        document.getElementById("selectUserButton").onclick = function(e) {
+            let username = userSelect[userSelect.selectedIndex].value;
+            let fullname = userSelect[userSelect.selectedIndex].innerText;
+            if (!selectedUsers.has(username)) {
+                selectedUsers.add(username);
+                stalkingUsersDiv.innerHTML += "<span>" + fullname + "</span>";
+            }
+            e.preventDefault();
+        }
+
+        // get list of users
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/userList');
+        xhr.onloadend = function(e) {
+            let userList = JSON.parse(this.responseText);
+            for (let i = 0; i < userList.length; i++) {
+                userSelect.innerHTML += "<option value=\"" + userList[i]._id + "\">" + userList[i].fullName + "</option>";
+            }
+        };
+        xhr.send();
+
+        var socket = io.connect('http://localhost:4000/');
+        socket.on('notification', addNotification);
+
+        function getCheckedFields() {
+            let all = document.forms.userIdentifyForm.field;
+            let arr = [];
+            for (let i = 0; i < all.length; i++) {
+                if (all[i].checked)
+                    arr.push(all[i].value);
+            }
+            return arr;
+        }
+
+        document.getElementById('subscribeBtn').onclick = function(e) {
+            e.preventDefault();
+            let data = {
+                sender: document.getElementById('identityInput').value,
+                targets: Array.from(selectedUsers),
+                fields: getCheckedFields()
+            };
+            console.log(data);
+            if (data.sender.length == 0 || data.fields.length == 0) {
+                alert("Please select something to monitor!");
+                return;
+            }
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.open('POST', '/subscribe');
+            xmlhttp.setRequestHeader("Content-Type", "application/json");
+            xmlhttp.send(JSON.stringify(data));
+            xmlhttp.onloadend = function(e) {
+                if (this.status == 200) {
+                    addNotification("Subscribed to notifications");
+                    socket.emit('identify', data.sender);
+                }                    
+                else
+                    alert("Failed to subscribe to notifications");
+            };
+        }
+    </script>
+</html>
