@@ -32,7 +32,7 @@
     </head>
     <body>
         <div id="identifyDiv">
-            <h2>Realtime notification system using socket.io, express and mongodb</h2>
+            <h2>Realtime notification system using Socket.IO, Express and MongoDB</h2>
         </div>
         <hr>
 
@@ -40,6 +40,7 @@
             <div>
                 <span class='notifTime' style="font-weight: bold">Time</span>
                 <span class='notifContent' style="margin-left: 120px; font-weight: bold">Notification</span>
+                <button id="clearNotifications">Clear Notifications</button>
                 <hr>
             </div>
             <div id="notificationsTable">
@@ -183,6 +184,11 @@
             userSelect.selectedIndex = 3;  selectUserBtn.click();
             userSelect.selectedIndex = 5;  selectUserBtn.click();
             document.getElementById('subscribeBtn').click();
+        }
+
+        document.getElementById("clearNotifications").onclick = function(e) {
+            e.preventDefault();
+            notificationsTable.innerHTML = '';
         }
     </script>
 </html>
