@@ -50,7 +50,7 @@ node index.js test
   **Solution**: However, Mongo has something called *tailable cursors*, which are similar to *tail -f* on Unix.
                 But, the [official docs](https://docs.mongodb.com/manual/core/tailable-cursors/) doesn't recommend tailable cursors for high volume of writes. Rather, they provide a method of replication of databases, and *oplogs*, which is kinda log of whatever query is made. One can smartly utilize this log in his/her interest.
 
-                For NodeJS, there were many oplog watchers already available, of which many were obsolete, and many were poorly documented and unreliable. This reduced the number of choices after trying most of them, making me finally step onto [mongo-oplog-watch](https://github.com/sachinb94/mongo-oplog-watch). It worked like charm, credits to proper documentation.
+    For NodeJS, there were many oplog watchers already available, of which some were obsolete, and some were poorly documented and unreliable. This reduced the number of choices after trying most of them, making me finally step onto [mongo-oplog-watch](https://github.com/sachinb94/mongo-oplog-watch). It worked like charm, credits to proper documentation.
 
 
 * **Realtime communication**: The notifications need to be sent to clients in real time.
@@ -70,3 +70,25 @@ The codebase is built upon **Node JS**. There are three main javascript files:
 There are two collections.
 1. **People's collection**: This contains the objects for all users, and their basic data.
 2. **Subscriber's collection**: This contains the objects for all subscribers, so that other instance of this code can see which users are being served currently.
+
+
+### REFERENCES
+
+**expressjs and socketio references**
+* https://blog.joshsoftware.com/2012/01/30/push-notifications-using-express-js-and-socket-io/
+* https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
+* https://blog.joshsoftware.com/2012/01/30/push-notifications-using-express-js-and-socket-io/
+* https://code.tutsplus.com/tutorials/real-time-chat-with-nodejs-socketio-and-expressjs--net-31708
+ 
+**setting up replication in mongodb and oplog**
+* https://docs.mongodb.com/getting-started/shell/import-data/
+* https://docs.mongodb.com/getting-started/shell/update/
+* https://www.tutorialspoint.com/mongodb/mongodb_replication.htm
+* http://stackoverflow.com/questions/22629462/does-mongodb-have-the-properties-such-as-trigger-and-procedure-in-a-relational-d
+* https://github.com/sachinb94/mongo-oplog-watch
+ 
+**XHR in plain javascript**
+* https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+**Gossip girl characters for sample dataset**
+* https://en.wikipedia.org/wiki/List_of_Gossip_Girl_characters#Main
