@@ -2,6 +2,20 @@
 #### Author: Himanshu Shekhar
 ---
 
+* [Development platform](#development-platform)
+* [Running TLDR](#tldr)
+* [Running Detailed description](#detailed-description)
+* [Problem solving tactics](#the-problems)
+* [Code Structure](#code-structure)
+* [References](#references)
+
+### Development platform
+| Operating system | Linux |
+| Distribution | Ubuntu 16.04 (KDE) |
+| Node Version | 6.10.2 |
+| MongoDB Version | 3.4.3 |
+| Architecture | 64 bit Intel |
+
 ### Preparing to run
 #### TLDR
 Inside the folder having this code
