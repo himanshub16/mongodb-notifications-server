@@ -1,2 +1,15 @@
 https://blog.joshsoftware.com/2012/01/30/push-notifications-using-express-js-and-socket-io/
 https://www.tutorialspoint.com/mongodb/mongodb_replication.htm
+https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
+https://docs.mongodb.com/getting-started/shell/import-data/
+http://stackoverflow.com/questions/22629462/does-mongodb-have-the-properties-such-as-trigger-and-procedure-in-a-relational-d
+
+https://github.com/sachinb94/mongo-oplog-watch
+https://blog.joshsoftware.com/2012/01/30/push-notifications-using-express-js-and-socket-io/
+https://code.tutsplus.com/tutorials/real-time-chat-with-nodejs-socketio-and-expressjs--net-31708
+https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+https://docs.mongodb.com/getting-started/shell/update/
+
+
+https://en.wikipedia.org/wiki/List_of_Gossip_Girl_characters#Main
