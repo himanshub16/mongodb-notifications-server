@@ -1,16 +1,15 @@
-const dbURL = require("./configs").config.subscriptionsDB;
-const peopleDB = require('./configs').config.mainDB;
+const config = require('./configs').config;
 const MongoClient = require("mongodb").MongoClient,
     assert = require("assert");
 
 const mongoWatch = require('mongo-oplog-watch');
-const watcher = mongoWatch(peopleDB, {
-    ns: "test.people"
+const watcher = mongoWatch(config.peopleDB, {
+    ns: config.peopleNS
 });
 
 watcher.on("update", function(doc) {
-    console.log(doc);
     let username = doc.query._id;
+    console.log(username, 'updated', doc.object.set);
     for (let userid in subscribers) {
         /* for each user who is available, 
          * prepare the message string and emit it
@@ -24,7 +23,6 @@ watcher.on("update", function(doc) {
                (subscribers[userid].targets.length === 0)
              )
             ) {
-                console.log(doc.object.set, subscribers[userid].fields);
                 for (let changedKey in doc.object.set) {
                     for (let i = 0; i < subscribers[userid].fields.length; i++) {
                         if (subscribers[userid].fields[i] == changedKey)
@@ -32,7 +30,7 @@ watcher.on("update", function(doc) {
                                 subscribers[userid].socket.emit("notification", 
                                     username + ' changed ' + changedKey + ' to ' + doc.object.set[changedKey] );
                             } else {
-                                console.log("socket not available");
+                                console.log("socket not available for", userid);
                             }
                         }
                     }
@@ -45,7 +43,6 @@ watcher.on("update", function(doc) {
  * Structure :
  * {
  *  userid: {
- *      historyId  (int),
  *      targets    (users) (array of usernames),
  *      fields     (array of fields),
  *      alive      (boolean),
@@ -57,10 +54,11 @@ watcher.on("update", function(doc) {
  */
 var subscribers = {};
 
+/* get all user names and ids from peopleDB */
 function getAllUserName(callback) {
-    MongoClient.connect(peopleDB, function (err, db) {
+    MongoClient.connect(config.peopleDB, function (err, db) {
         assert.equal(null, err);
-        let collection = db.collection("people");
+        let collection = db.collection(config.peopleColl);
         collection.find( {}, 
                          { '_id': 1, 'fullName': 1 }
             ).toArray(function(err, docs) {
@@ -71,10 +69,12 @@ function getAllUserName(callback) {
     });
 }
 
+/* get data for a user from subscribers' database */
 function getUserData(username, callback) {
-    MongoClient.connect(dbURL, function (err, db) {
+    console.log(username, 'getuserdata');
+    MongoClient.connect(config.subscriptionsDB, function (err, db) {
         assert.equal(null, err);
-        let collection = db.collection("subscribers");
+        let collection = db.collection(config.subscribersColl);
         collection.find({'_id': username}).toArray(function (err, docs) {
             assert.equal(err, null);
             db.close();
@@ -83,12 +83,12 @@ function getUserData(username, callback) {
     });
 }
 
+/* update data in subscribers' database */
 function updateUserData(username, data, callback) {
-    assert.notEqual(undefined, data.historyId);
     assert.notEqual(undefined, data.targets);
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(config.subscriptionsDB, function (err, db) {
         assert.equal(null, err);
-        let collection = db.collection("subscribers");
+        let collection = db.collection(config.subscribersColl);
         collection.deleteOne({_id: username}, () => {
             collection.insertOne(data, function(err, result) {
                     assert.equal(err, null);
@@ -100,10 +100,11 @@ function updateUserData(username, data, callback) {
     });
 }
 
+/* set alive status for the subscriber */
 function setAlive(username, aliveStatus, callback) {
-    MongoClient.connect(dbURL, function (err, db) {
+    MongoClient.connect(config.subscriptionsDB, function (err, db) {
         assert.equal(null, err);
-        let collection = db.collection("subscribers");
+        let collection = db.collection(config.subscribersColl);
         collection.updateOne(
             {_id: username},
             { $set: { alive: aliveStatus } },
@@ -117,6 +118,7 @@ function setAlive(username, aliveStatus, callback) {
     });
 }
 
+/* subscribe a user to notifications */
 function subscribe(username, targets, fields, callback) {
     getUserData(username, (docs) => {
         if (docs !== undefined) {
@@ -139,6 +141,7 @@ function subscribe(username, targets, fields, callback) {
     });
 }
 
+/* unsubscribe a user */
 function unsubscribe(username) {
     if (username in subscribers) {
         subscribers[username].alive = false;
