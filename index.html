@@ -33,8 +33,6 @@
     <body>
         <div id="identifyDiv">
             <h2>Realtime notification system using socket.io, express and mongodb</h2>
-            <h3>Himanshu Shekhar (himashushekharb16@gmail.com)</h3>
-            
         </div>
         <hr>
 
@@ -71,6 +69,7 @@
                 </fieldset>
                 <br><br>
                 <center>
+                    <button id="fillDefault">Fill default and test</button>
                     <button type="submit" id="subscribeBtn">Start Stalking!</button>
                 </center>
             </form>
@@ -103,12 +102,21 @@
             }, 2000);
         }
 
+        var allSelected = false;
         document.getElementById("selectUserButton").onclick = function(e) {
-            let username = userSelect[userSelect.selectedIndex].value;
-            let fullname = userSelect[userSelect.selectedIndex].innerText;
-            if (!selectedUsers.has(username)) {
-                selectedUsers.add(username);
-                stalkingUsersDiv.innerHTML += "<span>" + fullname + "</span>";
+            e.preventDefault();
+            if(allSelected) {
+                console.log("all already selected");
+                e.preventDefault();
+            } else {
+                let username = userSelect[userSelect.selectedIndex].value;
+                if (username == 'all')
+                    allSelected = true;
+                let fullname = userSelect[userSelect.selectedIndex].innerText;
+                if (!selectedUsers.has(username)) {
+                    selectedUsers.add(username);
+                    stalkingUsersDiv.innerHTML += "<span>" + fullname + "</span>";
+                }
             }
             e.preventDefault();
         }
@@ -162,6 +170,19 @@
                 else
                     alert("Failed to subscribe to notifications");
             };
+        }
+
+        document.getElementById("fillDefault").onclick = function(e) {
+            e.preventDefault();
+            document.getElementById('identityInput').value = userSelect[4].value;
+            document.forms.userIdentifyForm.field[1].checked = true;
+            document.forms.userIdentifyForm.field[2].checked = true;
+            document.forms.userIdentifyForm.field[3].checked = true;
+            let selectUserBtn = document.getElementById("selectUserButton");
+            userSelect.selectedIndex = 1;  selectUserBtn.click();
+            userSelect.selectedIndex = 3;  selectUserBtn.click();
+            userSelect.selectedIndex = 5;  selectUserBtn.click();
+            document.getElementById('subscribeBtn').click();
         }
     </script>
 </html>
