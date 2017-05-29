@@ -24,6 +24,7 @@ mongoimport --db test --collection subscribers --drop --file subscribers.json
 mongoimport --db test --collection people --drop --file people.json
 npm install
 sudo mongod --port 27017 --dbpath /var/lib/mongodb --replSet rs0
+Start mongo shell and type "rs.initiate()"
 node index.js test
 ```
 Open http://localhost:4000/
@@ -44,6 +45,12 @@ npm install
   Any change in configuration needs to made in **configs.js**.
 ```
 sudo mongod --port 27017 --dbpath /var/lib/mongodb --replSet rs0
+```
+* Initiate the replication from *mongoclient*.
+```
+mongo
+and then type
+rs.initiate()
 ```
 * Start the HTTP server using index.js, which will run on port 4000 by default.
 ```
